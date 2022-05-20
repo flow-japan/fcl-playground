@@ -1,4 +1,6 @@
-# fcl-playground
+# FCL Playground
+
+https://fcl-playground.web.app
 
 - **GetAccount**: Get the account information for any specified account address
 - **Script**: Executes a simple script (read-only)
