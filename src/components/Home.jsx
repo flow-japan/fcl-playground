@@ -39,7 +39,7 @@ const Home = () => {
           </Tab>
         </TabList>
       </Tabs>
-      <Tabs variant="enclosed">
+      <Tabs variant="enclosed" mb={4}>
         <TabList>
           <Tab>Authenticate</Tab>
           <Tab>Get Account Info</Tab>
