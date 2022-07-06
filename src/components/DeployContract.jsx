@@ -59,7 +59,6 @@ const DeployContract = () => {
 transaction(code: String) {
   prepare(acct: AuthAccount) {
     acct.contracts.add(name: "${contractName}", code: code.decodeHex())
-    // acct.contracts.remove(name: "${contractName}")
   }
 }
 `;
@@ -69,7 +68,10 @@ transaction(code: String) {
   const [contract, setContract] = useState(simpleContract);
   const updateContract = (value) => {
     setContract(value);
-    const regexResult = value.match(/pub\s+contract\s+(.+?)\s*{/);
+    const regexResult = value.match(/pub\s+contract\s+(.+?)\s*?[:{]/);
+    if (!regexResult) {
+      return;
+    }
     const contractName = regexResult.length >= 1 ? regexResult[1] : '';
     updateContractName(contractName);
   };
