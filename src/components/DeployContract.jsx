@@ -91,7 +91,7 @@ transaction(code: String) {
         fcl.args([
           fcl.arg(Buffer.from(contract, 'utf8').toString('hex'), t.String),
         ]),
-        fcl.limit(999),
+        fcl.limit(9999),
         fcl.proposer(fcl.currentUser().authorization),
         fcl.authorizations([fcl.currentUser().authorization]),
         fcl.payer(fcl.currentUser().authorization),
