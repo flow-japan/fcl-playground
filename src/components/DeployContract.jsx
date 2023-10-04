@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as fcl from '@onflow/fcl';
 import * as t from '@onflow/types';
 import {
   Button,
   Code,
+  Checkbox,
   Container,
   Heading,
   Box,
@@ -52,29 +53,8 @@ const DeployContract = () => {
   const [transactionResult, setTransactionResult] = useState();
   const [, setContractName] = useState('HelloWorld');
   const [transaction, setTransaction] = useState(deployTransaction);
-
-  const updateContractName = (contractName) => {
-    setContractName(contractName);
-    const string = `\
-transaction(code: String) {
-  prepare(acct: AuthAccount) {
-    acct.contracts.add(name: "${contractName}", code: code.decodeHex())
-  }
-}
-`;
-    setTransaction(string);
-  };
-
+  const [isUpdate, setUpdate] = useState(false);
   const [contract, setContract] = useState(simpleContract);
-  const updateContract = (value) => {
-    setContract(value);
-    const regexResult = value.match(/pub\s+contract\s+(.+?)\s*?[:{]/);
-    if (!regexResult) {
-      return;
-    }
-    const contractName = regexResult.length >= 1 ? regexResult[1] : '';
-    updateContractName(contractName);
-  };
 
   const runTransaction = async (event) => {
     event.preventDefault();
@@ -117,14 +97,43 @@ transaction(code: String) {
     }
   };
 
+  useEffect(() => {
+    const regexResult = contract.match(/pub\s+contract\s+(.+?)\s*?[:{]/);
+    if (!regexResult) {
+      return;
+    }
+    const contractName = regexResult.length >= 1 ? regexResult[1] : '';
+    setContractName(contractName);
+    const string = `\
+transaction(code: String) {
+  prepare(acct: AuthAccount) {
+    acct.contracts.${
+      isUpdate ? 'update__experimental' : 'add'
+    }(name: "${contractName}", code: code.decodeHex())
+  }
+}
+`;
+    setTransaction(string);
+  }, [isUpdate, contract]);
+
   return (
     <Container m={4} maxWidth="3xl">
       <Box p={2}>
         <Heading size="lg">Deploy Contract</Heading>
       </Box>
       <Box p={2}>
+        <Checkbox
+          value={isUpdate}
+          onChange={() => {
+            setUpdate(!isUpdate);
+          }}
+        >
+          Update Contract
+        </Checkbox>
+      </Box>
+      <Box p={2}>
         <Text size="md">Please edit the contract to be deployed.</Text>
-        <CodeEditor value={contract} onChange={updateContract} />
+        <CodeEditor value={contract} onChange={setContract} />
       </Box>
       <Box p={2}>
         <Text size="md">Transaction(generated automatically)</Text>
