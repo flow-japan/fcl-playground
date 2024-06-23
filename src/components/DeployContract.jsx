@@ -98,9 +98,12 @@ const DeployContract = () => {
   };
 
   useEffect(() => {
-    const regexResult = contract.match(/pub\s+contract\s+(.+?)\s*?[:{]/);
+    let regexResult = contract.match(/pub\s+contract\s+(.+?)\s*?[:{]/);
     if (!regexResult) {
-      return;
+      regexResult = contract.match(/access\(all\)\s+contract\s+(.+?)\s*?[:{]/);
+      if (!regexResult) {
+        return;
+      }
     }
     const contractName = regexResult.length >= 1 ? regexResult[1] : '';
     setContractName(contractName);
